@@ -275,7 +275,7 @@ export default class PlaylistLoader extends EventTarget {
     const parser = new M3u8Parser();
 
     // adding custom tag parsers
-    this.parsers.forEach(tagParser => parser.addParser(tagParser));
+    this.parsers.forEach(customParser => parser.addParser(customParser));
 
     // adding custom tag mappers
     this.mappers.forEach(mapper => parser.addTagMapper(mapper));
@@ -520,7 +520,7 @@ export default class PlaylistLoader extends EventTarget {
       const parser = new M3u8Parser();
 
       // adding custom tag parsers
-      this.parsers.forEach(tagParser => parser.addParser(tagParser));
+      this.parsers.forEach(customParser => parser.addParser(customParser));
 
       // adding custom tag mappers
       this.mappers.forEach(mapper => parser.addTagMapper(mapper));
