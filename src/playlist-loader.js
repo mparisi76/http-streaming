@@ -10,6 +10,9 @@ import videojs from 'video.js';
 import { Parser as M3u8Parser } from 'm3u8-parser';
 import window from 'global/window';
 
+// TODO: REMOVE
+M3u8Parser.prototype.addTagMapper = x => x;
+
 const { mergeOptions, EventTarget, log } = videojs;
 
 /**
@@ -203,6 +206,11 @@ export default class PlaylistLoader extends EventTarget {
     this.hls_ = hls;
     this.withCredentials = withCredentials;
 
+    const options = hls.options_;
+
+    this.parsers = (options && options.parsers) || [];
+    this.mappers = (options && options.mappers) || [];
+
     if (!this.srcUrl) {
       throw new Error('A non-empty playlist URL is required');
     }
@@ -265,6 +273,12 @@ export default class PlaylistLoader extends EventTarget {
     this.state = 'HAVE_METADATA';
 
     const parser = new M3u8Parser();
+
+    // adding custom tag parsers
+    this.parsers.forEach(tagParser => parser.addParser(tagParser));
+
+    // adding custom tag mappers
+    this.mappers.forEach(mapper => parser.addTagMapper(mapper));
 
     parser.push(xhr.responseText);
     parser.end();
@@ -504,6 +518,12 @@ export default class PlaylistLoader extends EventTarget {
       }
 
       const parser = new M3u8Parser();
+
+      // adding custom tag parsers
+      this.parsers.forEach(tagParser => parser.addParser(tagParser));
+
+      // adding custom tag mappers
+      this.mappers.forEach(mapper => parser.addTagMapper(mapper));
 
       parser.push(req.responseText);
       parser.end();
